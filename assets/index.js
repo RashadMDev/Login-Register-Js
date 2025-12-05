@@ -7,9 +7,6 @@ const img = document.getElementById('image');
 const myForm = document.getElementById('myForm');
 
 
-
-
-
 async function getUsers() {
       try {
             const response = await axios.get(`${baseUrl}users`);
@@ -21,33 +18,44 @@ async function getUsers() {
                   <div class="card-body">
                         <h5 class="card-title">${item.username}</h5>
                         <p class="card-text">${item.email}</p>
-                        <button class="btn btn-danger">Delete</button>
+                        <button class="btn btn-danger" data-id="${item.id}">Delete</button>
                   </div>
             </div>
       `;
+                  const deleteButtons = document.querySelectorAll('.btn-danger');
+                  deleteButtons.forEach(button => {
+                        button.addEventListener('click', (e) => {
+                              const id = e.target.dataset.id
+                              deleteUser(id)
+                        })
+                  });
+
             });
+
             console.log('Users:', data);
       } catch (error) {
             console.error('Error fetching users:', error);
       }
 }
 
+
 async function addUser(user) {
       try {
             await axios.post(`${baseUrl}users`, user);
-            await Swal.fire({
-                  position: "top-end",
-                  icon: "success",
-                  title: "Your work has been saved",
-                  showConfirmButton: false,
-                  timer: 1500
-            });
+
       } catch (error) {
             console.error('Error adding user:', error);
       }
 }
 
-
+async function deleteUser(id) {
+      try {
+            const res = await axios.delete(`${baseUrl}users/${id}`);
+            console.log('Delete response:', res.data);
+      } catch (error) {
+            console.error('Error deleting user:', error);
+      }
+}
 
 if (myForm) {
       myForm.addEventListener('submit', (e) => {
@@ -71,3 +79,9 @@ if (cards) {
 } else {
       console.error('Cards container not found');
 }
+// deleteButtons.forEach(button => {
+//       button.addEventListener('click', (e) => {
+//             console.log("test");
+//       });
+// });
+
